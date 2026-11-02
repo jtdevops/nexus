@@ -1,0 +1,18 @@
+{
+  "name": "syncler2wako",
+  "version": "1.0.0",
+  "description": "Convert Syncler vendor/express provider packages into Wako Helios-compatible JSON",
+  "type": "module",
+  "bin": {
+    "syncler2wako": "./src/syncler2wako.js"
+  },
+  "scripts": {
+    "convert": "node ./src/syncler2wako.js",
+    "convert:express": "node ./src/syncler2wako.js --source express --out providers/express-hybrid.json",
+    "convert:vendor": "node ./src/syncler2wako.js --source vendor --out providers/express-hybrid.json"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
