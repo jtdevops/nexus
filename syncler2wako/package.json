@@ -9,7 +9,10 @@
   "scripts": {
     "convert": "node ./src/syncler2wako.js",
     "convert:express": "node ./src/syncler2wako.js --source express --out providers/express-hybrid.json",
-    "convert:vendor": "node ./src/syncler2wako.js --source vendor --out providers/express-hybrid.json"
+    "convert:vendor": "node ./src/syncler2wako.js --source vendor --out providers/express-hybrid.json",
+    "probe": "node ./src/probe.js --providers providers/express-hybrid.json --out providers/probe-report.json --blacklist-out providers/blacklist.txt",
+    "convert:filtered": "node ./src/syncler2wako.js ./providers/express-hybrid.json --blacklist-file providers/blacklist.txt --out providers/express-hybrid-filtered.json",
+    "convert:filtered-strict": "node ./src/syncler2wako.js ./providers/express-hybrid.json --blacklist-file providers/blacklist-combined.txt --out providers/express-hybrid-filtered-strict.json"
   },
   "engines": {
     "node": ">=18"
