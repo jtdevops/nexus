@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { DEFAULT_SOURCES, resolveAndConvert } from './resolve.js';
 
@@ -22,6 +22,7 @@ Options:
   --pretty                    Pretty-print JSON (default: true)
   --compact                   Compact JSON output
   --blacklist <a,b,c>         Remove providers by id or name
+  --blacklist-file <file>     Read blacklist ids from a file (comma/newline separated)
   --orion-api-key <key>       Pass Orion key through to JakedUp hybrid URLs
   --exclude-orion             Exclude Orion common providers (common-providers=off)
   --jackett-base-url <url>    Include Jackett custom provider
@@ -80,6 +81,9 @@ function parseArgs(argv) {
           .map((value) => value.trim())
           .filter(Boolean);
         break;
+      case '--blacklist-file':
+        options.blacklistFile = next();
+        break;
       case '--orion-api-key':
         options.orionApiKey = next();
         break;
@@ -124,11 +128,24 @@ function resolveInput(options) {
   return DEFAULT_SOURCES.express;
 }
 
+async function loadBlacklistFile(filePath) {
+  const text = await readFile(filePath, 'utf8');
+  return text
+    .split(/[\n,]/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   if (options.help) {
     printHelp();
     return;
+  }
+
+  if (options.blacklistFile) {
+    const fromFile = await loadBlacklistFile(options.blacklistFile);
+    options.blacklist = [...new Set([...(options.blacklist || []), ...fromFile])];
   }
 
   const input = resolveInput(options);
